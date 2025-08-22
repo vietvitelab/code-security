@@ -1,29 +1,27 @@
 const express = require('express');
-const db = require('./database.js');
+const path = require('path');
+const fs = require('fs');
+
 const app = express();
 const PORT = 3000;
 
-app.get('/user', (req, res) => {
-  const userId = req.query.id; // User input from query parameter
+app.get('/download', (req, res) => {
+  const filename = req.query.file; // User input from a query parameter
 
-  if (!userId) {
-    return res.status(400).send('User ID is required.');
+  if (!filename) {
+    return res.status(400).send('Filename query parameter is required.');
   }
+  const filePath = path.join(__dirname, 'public', filename);
 
-  const query = "SELECT * FROM users WHERE id = " + userId;
-
-  console.log(`Executing query: ${query}`);
-
-  db.get(query, [], (err, row) => {
-    if (err) {
-      return res.status(500).send(err.message);
-    }
-    if (row) {
-      res.json(row);
-    } else {
-      res.status(404).send('User not found.');
-    }
-  });
+  if (fs.existsSync(filePath)) {
+    res.download(filePath, (err) => {
+      if (err) {
+        console.error('Error sending file:', err);
+      }
+    });
+  } else {
+    res.status(404).send('File not found.');
+  }
 });
 
 app.listen(PORT, () => {
