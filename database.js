@@ -1,6 +1,5 @@
-// database.js
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database(':memory:'); // Use in-memory database
+const db = new sqlite3.Database(':memory:');
 
 db.serialize(() => {
   // Create a users table

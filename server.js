@@ -10,9 +10,6 @@ app.get('/user', (req, res) => {
     return res.status(400).send('User ID is required.');
   }
 
-  // VULNERABLE LINE: User input is directly concatenated into the SQL query.
-  // This is a classic SQL Injection vulnerability.
-  // Snyk Code will trace the `userId` from `req.query.id` to this database query.
   const query = "SELECT * FROM users WHERE id = " + userId;
 
   console.log(`Executing query: ${query}`);
